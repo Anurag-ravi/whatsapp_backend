@@ -1,6 +1,8 @@
 const otpGenerator = require("otp-generator");
 var CryptoJS = require("crypto-js");
 require("dotenv").config();
+const twilio = require("twilio");
+const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 
 const createOtp = (params) => {
   const otp = otpGenerator.generate(6, {
@@ -17,6 +19,14 @@ const createOtp = (params) => {
   console.log(otp);
 
   // Send SMS to user
+  client.messages
+    .create({
+      to: params.phone,
+      from: "+12626864763",
+      body: `Your verification code is ${otp}. It will be valid for 5 minutes`,
+    })
+    .then((message) => console.log(`Message SID ${message.sid}`))
+    .catch((error) => console.error(error));
 
   return JSON.stringify({ hash: fullHash });
 };
