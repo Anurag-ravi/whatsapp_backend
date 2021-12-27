@@ -3,7 +3,7 @@ var bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const PORT = 3000 || process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const app = express();
 const httpServer = require("http").createServer(app);
 
@@ -13,7 +13,11 @@ const userRoutes = require("./routes/user");
 // middlewares
 app.use(bodyParser.json());
 app.use("/users", userRoutes);
+
 // routes
+app.get("/", (req, res) => {
+  res.send("welcome");
+});
 
 // connect to db
 mongoose.connect(process.env.DB_CONNECTION, () => {
@@ -27,14 +31,14 @@ var clients = {};
 // socket functions
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("message",(payload)=>{
+  socket.on("message", (payload) => {
     console.log(payload);
-    io.emit("reply",`this was your message: ${payload.message}`)
-  })
-  socket.on("join",(id)=>{
+    io.emit("reply", `this was your message: ${payload.message}`);
+  });
+  socket.on("join", (id) => {
     // store the user in currently active clients
-    clients[id]=socket;
-  })
+    clients[id] = socket;
+  });
 });
 
 // app listen

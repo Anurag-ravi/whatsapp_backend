@@ -19,14 +19,14 @@ const createOtp = (params) => {
   console.log(otp);
 
   // Send SMS to user
-  client.messages
-    .create({
-      to: params.phone,
-      from: "+12626864763",
-      body: `Your verification code is ${otp}. It will be valid for 5 minutes`,
-    })
-    .then((message) => console.log(`Message SID ${message.sid}`))
-    .catch((error) => console.error(error));
+  // client.messages
+  //   .create({
+  //     to: params.phone,
+  //     from: "+12626864763",
+  //     body: `Your verification code is ${otp}. It will be valid for 5 minutes`,
+  //   })
+  //   .then((message) => console.log(`Message SID ${message.sid}`))
+  //   .catch((error) => console.error(error));
 
   return JSON.stringify({ hash: fullHash });
 };
