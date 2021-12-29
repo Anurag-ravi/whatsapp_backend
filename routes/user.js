@@ -5,7 +5,6 @@ const User = require("../models/userModel");
 const router = express.Router();
 
 router.post("/sendotp", (req, res) => {
-  console.log(req.body);
   res.send(createOtp(req.body));
 });
 

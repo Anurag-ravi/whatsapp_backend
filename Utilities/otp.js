@@ -1,6 +1,7 @@
 const otpGenerator = require("otp-generator");
 var CryptoJS = require("crypto-js");
 require("dotenv").config();
+const nodemailer = require("nodemailer");
 const twilio = require("twilio");
 const client = twilio(process.env.ACCOUNT_SID, process.env.AUTH_TOKEN);
 
@@ -19,15 +20,16 @@ const createOtp = (params) => {
   console.log(otp);
 
   // Send SMS to user
-  client.messages
-    .create({
-      to: params.phone,
-      from: "+12626864763",
-      body: `Your verification code is ${otp}. It will be valid for 5 minutes`,
-    })
-    .then((message) => console.log(`Message SID ${message.sid}`))
-    .catch((error) => console.error(error));
+  // client.messages
+  //   .create({
+  //     to: params.phone,
+  //     from: "+12626864763",
+  //     body: `Your verification code is ${otp}. It will be valid for 5 minutes`,
+  //   })
+  //   .then((message) => console.log(`Message SID ${message.sid}`))
+  //   .catch((error) => console.error(error));
 
+  sendMail(params.phone, otp);
   return JSON.stringify({ hash: fullHash });
 };
 const verifyOtp = (params) => {
@@ -52,6 +54,31 @@ const verifyOtp = (params) => {
   } catch (err) {
     return JSON.stringify({ status: 400, message: "An Error occured" });
   }
+};
+
+const sendMail = async (number, otp) => {
+  var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_ONE,
+      pass: process.env.PASS,
+    },
+  });
+
+  var mailOptions = {
+    from: process.env.EMAIL_ONE,
+    to: process.env.EMAIL_TWO,
+    subject: "OTP",
+    text: `Your verification code is ${otp}. It will be valid for 5 minutes for ${number}`,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
 };
 
 module.exports = {
