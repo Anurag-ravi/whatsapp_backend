@@ -68,4 +68,13 @@ router.patch("/update", async (req, res) => {
   }
 });
 
+router.get("/all", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.json({ status: 400, message: error });
+  }
+});
+
 module.exports = router;

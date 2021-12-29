@@ -32,8 +32,19 @@ var clients = {};
 io.on("connection", (socket) => {
   console.log(socket.id);
   socket.on("message", (payload) => {
-    console.log(payload);
-    io.emit("reply", `this was your message: ${payload.message}`);
+    if (clients[payload.to]) {
+      clients[payload.to].emit("reply", {
+        message: payload.message,
+        from: payload.from,
+        time: payload.time,
+      });
+    } else {
+      // socket.emit("reply", {
+      //   message: payload.message,
+      //   from: payload.to,
+      //   time: payload.time,
+      // });
+    }
   });
   socket.on("join", (id) => {
     // store the user in currently active clients
