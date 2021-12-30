@@ -49,6 +49,11 @@ io.on("connection", (socket) => {
   socket.on("join", (id) => {
     // store the user in currently active clients
     clients[id] = socket;
+    io.emit("joined", id);
+  });
+  socket.on("left", (id) => {
+    // remove user from active users list
+    io.emit("lefted", id);
   });
 });
 
