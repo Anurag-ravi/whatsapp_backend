@@ -27,6 +27,7 @@ mongoose.connect(process.env.DB_CONNECTION, () => {
 const io = require("socket.io")(httpServer);
 
 var clients = {};
+var sockets = {};
 
 // socket functions
 io.on("connection", (socket) => {
@@ -49,11 +50,12 @@ io.on("connection", (socket) => {
   socket.on("join", (id) => {
     // store the user in currently active clients
     clients[id] = socket;
+    sockets[socket.id] = id;
     io.emit("joined", id);
   });
   socket.on("disconnect", (id) => {
     // remove user from active users list
-    io.emit("lefted", id);
+    io.emit("lefted", sockets[socket.id]);
   });
 });
 
