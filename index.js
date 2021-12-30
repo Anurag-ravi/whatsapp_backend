@@ -1,6 +1,7 @@
 const express = require("express");
 var bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const { stringify } = require("flatted");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
@@ -54,7 +55,11 @@ io.on("connection", (socket) => {
     // notify other users that this person is online
     io.emit("joined", id);
     // send list of online persons to new joiner
-    socket.emit("joinresponse", JSON.stringify(clients));
+    var online = [];
+    for (const item in clients) {
+      online.push(item);
+    }
+    socket.emit("joinresponse", JSON.stringify(online));
   });
   socket.on("disconnect", (idd) => {
     // remove user from active users list
@@ -66,6 +71,7 @@ io.on("connection", (socket) => {
     if (clients[id]) {
       delete sockets[socket.id];
     }
+    // emit message to everyone that one left
     io.emit("lefted", sockets[socket.id]);
   });
 });
