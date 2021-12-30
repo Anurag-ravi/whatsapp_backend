@@ -51,10 +51,21 @@ io.on("connection", (socket) => {
     // store the user in currently active clients
     clients[id] = socket;
     sockets[socket.id] = id;
+    // notify other users that this person is online
     io.emit("joined", id);
+    // send list of online persons to new joiner
+    socket.emit("joinresponse", JSON.stringify(clients));
   });
-  socket.on("disconnect", (id) => {
+  socket.on("disconnect", (idd) => {
     // remove user from active users list
+    var id;
+    if (sockets[socket.id]) {
+      id = sockets[socket.id];
+      delete sockets[socket.id];
+    }
+    if (clients[id]) {
+      delete sockets[socket.id];
+    }
     io.emit("lefted", sockets[socket.id]);
   });
 });
