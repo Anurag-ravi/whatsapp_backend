@@ -51,7 +51,7 @@ io.on("connection", (socket) => {
     clients[id] = socket;
     io.emit("joined", id);
   });
-  socket.on("left", (id) => {
+  socket.on("disconnect", (id) => {
     // remove user from active users list
     io.emit("lefted", id);
   });
