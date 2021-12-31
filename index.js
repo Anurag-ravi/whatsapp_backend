@@ -62,6 +62,8 @@ io.on("connection", (socket) => {
     socket.emit("joinresponse", JSON.stringify(online));
   });
   socket.on("disconnect", (idd) => {
+    // emit message to everyone that one left
+    io.emit("lefted", sockets[socket.id]);
     // remove user from active users list
     var id;
     if (sockets[socket.id]) {
@@ -71,8 +73,6 @@ io.on("connection", (socket) => {
     if (clients[id]) {
       delete sockets[socket.id];
     }
-    // emit message to everyone that one left
-    io.emit("lefted", sockets[socket.id]);
   });
 });
 
